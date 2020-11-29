@@ -10,20 +10,25 @@ export default new Vuex.Store({
   },
   getters: {
     getNotes (state) {
-      const notes = []
-      Object.values(state.notes).forEach(note => notes.push(note))
-      return notes
+      return state.notes
     }
   },
   mutations: {
     setNote (state, note) {
       state.notes[note.id] = note
       setToStorage(state.notes)
+    },
+    deleteNote (state, noteId) {
+      delete state.notes[noteId]
+      setToStorage(state.notes)
     }
   },
   actions: {
     saveNote ({ commit }, note) {
       commit('setNote', note)
+    },
+    deleteNote ({ commit }, noteId) {
+      commit('deleteNote', noteId)
     }
   },
   modules: {}

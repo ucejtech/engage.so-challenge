@@ -63,11 +63,12 @@ export default {
     colorPicker: '',
     showImageHint: true,
     contentChanged: false,
+    editorContent: '',
     secondsSinceLastActivity: 0,
     noteSaveState: '',
     note: {
       id: '',
-      title: '',
+      title: 'Untitled',
       content: ''
     }
   }),
@@ -79,6 +80,12 @@ export default {
       this.editorContent = document.getElementById('editor')
       this.colorPicker = document.getElementById('color-picker')
       this.detectActivityAndAutosave()
+      if (this.$route.params.noteId) {
+        const noteId = this.$route.params.noteId
+        const note = Object.values(this.getNotes).find(note => note.id === noteId)
+        this.editorContent.innerHTML = note.content
+        this.note = note
+      }
     } catch (e) {
       alert('This challenge is not supported on your browser')
     }
@@ -261,7 +268,7 @@ export default {
       // An array of DOM events that should be interpreted as
       // user activity.
       const activityEvents = [
-        'mousedown', 'mousemove', 'keydown',
+        'mousedown', 'keydown',
         'scroll', 'touchstart'
       ]
 
@@ -273,7 +280,9 @@ export default {
     },
     save () {
       this.noteSaveState = 'Saving...'
-      this.saveNote(this.note)
+      const note = { ...this.note }
+      note.content = this.editorContent.innerHTML
+      this.saveNote(note)
       setTimeout(() => {
         this.noteSaveState = ''
       }, 300)
@@ -293,9 +302,6 @@ export default {
 .editor-page {
   position: relative;
 }
-nav {
-  z-index: 100;
-}
 .sticky {
   position: sticky;
   top: 0;
@@ -309,9 +315,6 @@ input.title:hover {
   padding: 3px;
   border-radius: 4px;
   border: 1px solid rgb(56, 51, 51);
-}
-.navbar {
-  background: #fff;
 }
 .bordered-y {
   border-top: 1px solid var(--color-border);

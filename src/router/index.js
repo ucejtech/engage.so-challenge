@@ -11,7 +11,13 @@ const routes = [
     component: Home
   },
   {
-    path: '/notes/create',
+    path: '/notes/edit',
+    name: 'Create Notes',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '../views/create-notes.vue')
+  },
+  {
+    path: '/notes/edit/:noteId',
     name: 'Create Notes',
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/create-notes.vue')
