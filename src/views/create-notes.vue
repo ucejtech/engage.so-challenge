@@ -1,8 +1,8 @@
 <template>
-  <div class="editor-page">
+  <div class="editor-page" id="editor-page">
     <nav class="navbar sticky mb-3">
       <div class="pl-5 py-3">
-        <img src="@/assets/images/icons/doc.svg" alt="" />
+        <img src="@/assets/images/icons/doc.svg" alt="" @click="$router.push('/')"/>
         <input
           class="ml-4 title"
           type="text"
@@ -10,10 +10,11 @@
           title="Rename"
           placeholder="Untitled"
         />
-        <span class="ml-2 text-grey italics doc-state">Saving ...</span>
+        <span class="ml-2 text-grey italics doc-state">{{ noteSaveState }}</span>
       </div>
       <div class="pl-5 bordered-y py-1 d-flex align-center">
-        <number-input @data="(v) => exec('fontSize', v)" />
+          <img src="@/assets/images/icons/save.svg" alt="" @click="save()" title="save"/>
+        <number-input class="ml-3" @data="(v) => exec('fontSize', v)" />
         <button
           class="ml-3 d-flex align-center flex-column"
           type="color"
@@ -42,6 +43,7 @@
       <div
         id="editor"
         class="editor mx-auto p-5 mb-3"
+        @input="(e) => note.content = e.target.innerHTML"
         autofocus
         contenteditable
       ></div>
@@ -51,6 +53,7 @@
 
 <script>
 import NumberInput from '../components/number-input.vue'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   components: {
     NumberInput
@@ -58,6 +61,10 @@ export default {
   data: () => ({
     textColor: '#000',
     colorPicker: '',
+    showImageHint: true,
+    contentChanged: false,
+    secondsSinceLastActivity: 0,
+    noteSaveState: '',
     note: {
       id: '',
       title: '',
@@ -71,11 +78,20 @@ export default {
       this.note.id = this.randomNoteId()
       this.editorContent = document.getElementById('editor')
       this.colorPicker = document.getElementById('color-picker')
+      this.detectActivityAndAutosave()
     } catch (e) {
       alert('This challenge is not supported on your browser')
     }
   },
+  computed: {
+    ...mapGetters([
+      'getNotes'
+    ])
+  },
   methods: {
+    ...mapActions([
+      'saveNote'
+    ]),
     exec (command, arg) {
       document.execCommand(command, true, arg)
     },
@@ -93,7 +109,7 @@ export default {
     getImage (e) {
       const file = e.target.files[0]
 
-      var reader = new FileReader()
+      const reader = new FileReader()
 
       let dataURI
 
@@ -108,6 +124,12 @@ export default {
           img.addEventListener('click', this.showResizer)
           img.src = dataURI
           this.editorContent.appendChild(img)
+          if (this.showImageHint) {
+            setTimeout(() => {
+              alert('click on an image to show the resize controls and click outside the image when done')
+            }, 1000)
+            this.showImageHint = false
+          }
         },
         false
       )
@@ -219,6 +241,49 @@ export default {
           window.removeEventListener('mousemove', resize)
         }
       }
+    },
+    detectActivityAndAutosave () {
+      // save after 1 second of inactivity
+      const maxInactivity = 1
+
+      // Setup the setInterval method to run
+      // at 500 milliseconds.
+      setInterval(() => {
+        this.secondsSinceLastActivity++
+        if (this.secondsSinceLastActivity > maxInactivity) {
+          if (this.contentChanged) {
+            // save
+            this.save()
+          }
+        }
+      }, 500)
+
+      // An array of DOM events that should be interpreted as
+      // user activity.
+      const activityEvents = [
+        'mousedown', 'mousemove', 'keydown',
+        'scroll', 'touchstart'
+      ]
+
+      // add these events to the document.
+      // register the activity function as the listener parameter.
+      activityEvents.forEach((eventName) => {
+        document.addEventListener(eventName, this.resetActivity, true)
+      })
+    },
+    save () {
+      this.noteSaveState = 'Saving...'
+      this.saveNote(this.note)
+      setTimeout(() => {
+        this.noteSaveState = ''
+      }, 300)
+      this.contentChanged = false
+    },
+    resetActivity () {
+      this.secondsSinceLastActivity = 0
+      if (this.note.content || this.note.title) {
+        this.contentChanged = true
+      }
     }
   }
 }
@@ -270,7 +335,8 @@ label:hover {
   border-radius: 3px;
 }
 button,
-label {
+label,
+img {
   border: none;
   background: transparent;
   cursor: pointer;
