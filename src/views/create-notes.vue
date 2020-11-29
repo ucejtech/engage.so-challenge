@@ -126,8 +126,8 @@ export default {
           dataURI = reader.result
 
           const img = document.createElement('img')
-          img.style.height = '600px'
-          img.style.width = '400px'
+          img.style.height = '400px'
+          img.style.width = '200px'
           img.addEventListener('click', this.showResizer)
           img.src = dataURI
           this.editorContent.appendChild(img)
@@ -398,5 +398,11 @@ button:focus {
   right: -9px;
   bottom: -9px;
   cursor: nwse-resize;
+}
+
+@media screen and (max-width: 1160px) {
+  .editor {
+    width: 70%;
+  }
 }
 </style>

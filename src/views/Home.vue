@@ -92,7 +92,7 @@ button.route {
   background: var(--color-primary);
 }
 .notes-list {
-  width: 444px;
+  width: 40%;
   border-radius: 5px;
 }
 .notes-list .note {
@@ -109,5 +109,11 @@ button.route {
 }
 .note-id {
   color: var(--color-grey);
+}
+
+@media screen and (max-width: 790px) {
+  .notes-list {
+    width: 70%;
+  }
 }
 </style>
