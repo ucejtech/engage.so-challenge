@@ -3,6 +3,10 @@
     --color-grey: #c2bcbc;
 }
 
+.p-relative {
+    position: relative;
+}
+
 .d-flex {
     display: flex;
 }
