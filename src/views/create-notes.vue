@@ -56,10 +56,10 @@ export default {
     NumberInput
   },
   data: () => ({
-    titleEdit: false,
     textColor: '#000',
     colorPicker: '',
     note: {
+      id: '',
       title: '',
       content: ''
     }
@@ -68,16 +68,19 @@ export default {
     try {
       this.exec('styleWithCSS', true)
       this.exec('bold')
+      this.note.id = this.randomNoteId()
       this.editorContent = document.getElementById('editor')
-      // this.editorContent.addEventListener('click', this.clearEditor)
       this.colorPicker = document.getElementById('color-picker')
     } catch (e) {
-      alert('This demo is not supported on your level of Mozilla.')
+      alert('This challenge is not supported on your browser')
     }
   },
   methods: {
     exec (command, arg) {
       document.execCommand(command, true, arg)
+    },
+    randomNoteId () {
+      return '_' + Math.random().toString(36).substr(2, 10)
     },
     openColorPicker () {
       this.colorPicker.click()
