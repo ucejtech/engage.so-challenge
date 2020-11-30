@@ -3,7 +3,7 @@
     <nav class="navbar sticky mb-3">
       <div class="px-5 py-3 d-flex align-center justify-space-between">
         <div class="title-home d-flex align-center">
-          <img src="@/assets/images/icons/home.svg" alt="" width="30px" />
+          <img src="@/assets/images/icons/home.svg" alt="home icon" width="25px" />
           <div class="title ml-3">Engage.so Challenge</div>
         </div>
         <div class="route">
@@ -22,18 +22,31 @@
           class="note px-2 py-2 d-flex align-center justify-space-between"
           v-for="(note, index) in notes"
           :key="index"
-          @click="$router.push(`/notes/edit/${note.id}`)"
         >
           <div>
             "{{ note.title ? note.title : "Untitled" }}"<br />
-          <em class="note-id">{{ note.id }}</em>
+            <em class="note-id">{{ note.id }}</em>
           </div>
-          <img src="@/assets/images/icons/delete.svg" alt="" @click.stop="deleteNotePrompt(note.id)">
+          <div class="d-flex align-center">
+            <img
+              src="@/assets/images/icons/edit.svg"
+              alt=""
+              @click="$router.push(`/notes/edit/${note.id}`)"
+            />
+            <img
+              src="@/assets/images/icons/view.svg"
+              alt=""
+              @click="$router.push(`/notes/${note.id}/view`)"
+            />
+            <img
+              src="@/assets/images/icons/delete.svg"
+              alt=""
+              @click.stop="deleteNotePrompt(note.id)"
+            />
+          </div>
         </div>
       </div>
-      <div v-else>
-        No Note Created
-      </div>
+      <div v-else>No Note Created</div>
     </div>
   </div>
 </template>
@@ -51,9 +64,7 @@ export default {
     this.parseNotes(this.getNotes)
   },
   methods: {
-    ...mapActions([
-      'deleteNote'
-    ]),
+    ...mapActions(['deleteNote']),
     parseNotes (notesList) {
       const notes = []
       Object.entries(notesList).forEach(([key, value]) => notes.push(value))
