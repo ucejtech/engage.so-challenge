@@ -5,10 +5,6 @@
 Challenge link:
 https://www.notion.so/Task-Vue-js-3009261cf2ce426b9cf33bac79632035
 
-## Aim
-
-The project should give users the opportunity to draw supported shapes with varying qualities such as colors and sizes which are subject to the user's discretion.
-
 ## Requirements
 
 - Nodejs
