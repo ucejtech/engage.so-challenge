@@ -16,8 +16,6 @@
         id="editor"
         class="editor mx-auto p-5 mb-3"
         v-html="note.content"
-        autofocus
-        contenteditable
       ></div>
     </section>
   </div>
