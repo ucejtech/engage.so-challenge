@@ -76,14 +76,18 @@ export default {
     try {
       this.exec('styleWithCSS', true)
       this.exec('bold')
-      this.note.id = this.randomNoteId()
+      this.note.id = this.$route.params.noteId || this.randomNoteId()
       this.editorContent = document.getElementById('editor')
       this.colorPicker = document.getElementById('color-picker')
       this.detectActivityAndAutosave()
       if (this.$route.params.noteId) {
-        const noteId = this.$route.params.noteId
+        const noteId = this.note.id
         const note = Object.values(this.getNotes).find(note => note.id === noteId)
         this.editorContent.innerHTML = note.content
+        const images = this.editorContent.getElementsByTagName('img')
+        images.forEach(image => {
+          image.addEventListener('click', this.showResizer)
+        })
         this.note = note
       }
     } catch (e) {
