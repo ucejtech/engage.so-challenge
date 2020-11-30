@@ -70,7 +70,12 @@ export default {
       id: '',
       title: 'Untitled',
       content: ''
-    }
+    },
+    inactivityInterval: '',
+    activityEvents: [
+      'mousedown', 'keydown',
+      'scroll', 'touchstart'
+    ]
   }),
   mounted () {
     try {
@@ -259,7 +264,7 @@ export default {
 
       // Setup the setInterval method to run
       // at 500 milliseconds.
-      setInterval(() => {
+      this.inactivityInterval = setInterval(() => {
         this.secondsSinceLastActivity++
         if (this.secondsSinceLastActivity > maxInactivity) {
           if (this.contentChanged) {
@@ -271,15 +276,11 @@ export default {
 
       // An array of DOM events that should be interpreted as
       // user activity.
-      const activityEvents = [
-        'mousedown', 'keydown',
-        'scroll', 'touchstart'
-      ]
 
       // add these events to the document.
       // register the activity function as the listener parameter.
-      activityEvents.forEach((eventName) => {
-        document.addEventListener(eventName, this.resetActivity, true)
+      this.activityEvents.forEach((eventName) => {
+        document.getElementById('editor-page').addEventListener(eventName, this.resetActivity, true)
       })
     },
     save () {
@@ -298,6 +299,10 @@ export default {
         this.contentChanged = true
       }
     }
+  },
+  beforeDestroy () {
+    // clear interval and save memory
+    clearInterval(this.inactivityInterval)
   }
 }
 </script>
